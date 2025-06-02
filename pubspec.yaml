@@ -1,0 +1,36 @@
+name: mega_features
+description: A new Flutter package project.
+version: 1.7.0
+homepage: "https://megaleios.com"
+publish_to: none
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_secure_storage: ^9.0.0
+  local_auth: ^2.3.0
+  mega_commons:
+  mega_commons_dependencies:
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+dependency_overrides:
+  mega_commons:
+    # git:
+    #   url: git@github.com:megaleios-git/megaflutter_commons.git
+    #   ref: 1.7.0
+    path: ../megaflutter_commons
+  mega_commons_dependencies:
+    # git:
+    #   url: git@github.com:megaleios-git/megaflutter_commons_dependencies.git
+    #   ref: 1.7.0
+    path: ../megaflutter_commons_dependencies
+
+flutter:
+  assets:
+    - assets/images/
