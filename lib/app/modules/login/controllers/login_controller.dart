@@ -37,7 +37,7 @@ class LoginController extends GetxController {
     super.onInit();
     isLogged = MegaDataCache.box<bool>();
     storage.read(key: 'authenticated').then(
-      (value) async {
+          (value) async {
         if (value == 'true') {
           await _callLocalAuth();
         }
@@ -202,7 +202,7 @@ class LoginController extends GetxController {
     await MegaRequestUtils.load(
       action: () async {
         final token =
-            await _loginProvider.authenticateUserBySocial(profileToken);
+        await _loginProvider.authenticateUserBySocial(profileToken);
         await _successLogin(token);
         ProfileToken.save(profileToken);
       },
@@ -237,7 +237,7 @@ class LoginController extends GetxController {
       await MegaRequestUtils.load(
         action: () async {
           final token =
-              await _loginProvider.authenticateUserBySocial(profileToken);
+          await _loginProvider.authenticateUserBySocial(profileToken);
           await _successLogin(token);
           ProfileToken.save(profileToken);
         },
@@ -274,7 +274,7 @@ class LoginController extends GetxController {
       await MegaRequestUtils.load(
         action: () async {
           final token =
-              await _loginProvider.authenticateUserBySocial(profileToken);
+          await _loginProvider.authenticateUserBySocial(profileToken);
           await _successLogin(token);
           ProfileToken.save(profileToken);
         },
