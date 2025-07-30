@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:mega_commons/mega_commons.dart';
 import 'package:mega_commons_dependencies/mega_commons_dependencies.dart';
+import 'package:mega_features/app/data/exceptions/email_in_use_exception.dart';
 
 import '../../../../mega_features.dart';
 
@@ -295,11 +296,23 @@ class LoginController extends GetxController {
   }
 
   Future<void> _registerProfile(ProfileToken profileToken) async {
-    await MegaRequestUtils.load(
-      action: () async {
-        final token = await _loginProvider.registerUserBySocial(profileToken);
-        await _successLogin(token);
-      },
-    );
+    try {
+      await MegaRequestUtils.load(
+        action: () async {
+          final token = await _loginProvider.registerUserBySocial(profileToken);
+          await _successLogin(token);
+        },
+      );
+    } on EmailInUseException catch (e) {
+      Get.snackbar(
+        'E-mail já cadastrado',
+        'Este e-mail já possui um cadastro. Por favor, faça o login com sua senha para vincular sua conta Google.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      MegaSnackbar.showErroSnackBar('Erro ao registrar: ${e.toString()}');
+    }
   }
 }
