@@ -1,7 +1,7 @@
 class Urls {
   Urls._();
 
-  static const String baseUrlMegaleios = 'https://api.megaleios.com/api/v1/';
+  static const String baseUrlMegaleios = 'https://api.mecabr.com/api/v1/';
   static const String changePassword = 'api/v1/Profile/ChangePassword';
   static const String forgotPassword = 'api/v1/Profile/ForgotPassword';
   static const String token = 'api/v1/Profile/Token';
