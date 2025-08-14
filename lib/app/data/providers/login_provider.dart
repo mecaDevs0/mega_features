@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mega_commons/mega_commons.dart';
@@ -17,25 +18,95 @@ class LoginProvider {
   }) : _restClientDio = restClientDio;
 
   Future<AuthToken> signInWithEmail(ProfileToken profileToken) async {
-    final MegaResponse result = await _restClientDio.post(
-      pathLogin ?? Urls.token,
-      data: {
-        'email': profileToken.email,
-        'password': profileToken.password,
-      },
-    );
-    return AuthToken.fromJson(result.data);
+    try {
+      final MegaResponse result = await _restClientDio.post(
+        pathLogin ?? Urls.token,
+        data: {
+          'email': profileToken.email,
+          'password': profileToken.password,
+        },
+      );
+      
+      // Verificar se result.data não é null antes de tentar criar AuthToken
+      if (result.data == null) {
+        throw MegaResponse(
+          message: 'Resposta inválida do servidor. Tente novamente.',
+          statusCode: 500,
+          erro: true,
+        );
+      }
+      
+      return AuthToken.fromJson(result.data);
+    } on DioException catch (e) {
+      // Tratamento específico para timeout do MongoDB
+      if (e.response?.statusCode == 400) {
+        final errorData = e.response?.data;
+        if (errorData != null && errorData is Map<String, dynamic>) {
+          final messageEx = errorData['messageEx'] as String?;
+          if (messageEx?.contains('timeout') == true || 
+              messageEx?.contains('MongoDB') == true ||
+              messageEx?.contains('CompositeServerSelector') == true) {
+            if (kDebugMode) {
+              print('🔧 Timeout do MongoDB detectado no login');
+            }
+            throw MegaResponse(
+              message: 'Servidor temporariamente sobrecarregado. Tente novamente em alguns minutos.',
+              statusCode: 400,
+              erro: true,
+            );
+          }
+        }
+      }
+      
+      // Re-throw outros erros
+      rethrow;
+    } catch (e) {
+      // Tratamento para outros tipos de erro
+      if (kDebugMode) {
+        print('🔧 Erro inesperado no login: $e');
+      }
+      throw MegaResponse(
+        message: 'Erro inesperado. Tente novamente.',
+        statusCode: 500,
+        erro: true,
+      );
+    }
   }
 
   Future<AuthToken> authenticateUserBySocial(ProfileToken profileToken) async {
-    final MegaResponse result = await _restClientDio.post(
-      pathLogin ?? Urls.token,
-      data: {
-        'providerId': profileToken.providerId,
-        'typeProvider': profileToken.typeProvider,
-      },
-    );
-    return AuthToken.fromJson(result.data);
+    try {
+      final MegaResponse result = await _restClientDio.post(
+        pathLogin ?? Urls.token,
+        data: {
+          'providerId': profileToken.providerId,
+          'typeProvider': profileToken.typeProvider,
+        },
+      );
+      return AuthToken.fromJson(result.data);
+    } on DioException catch (e) {
+      // Tratamento específico para timeout do MongoDB
+      if (e.response?.statusCode == 400) {
+        final errorData = e.response?.data;
+        if (errorData != null && errorData is Map<String, dynamic>) {
+          final messageEx = errorData['messageEx'] as String?;
+          if (messageEx?.contains('timeout') == true || 
+              messageEx?.contains('MongoDB') == true ||
+              messageEx?.contains('CompositeServerSelector') == true) {
+            if (kDebugMode) {
+              print('🔧 Timeout do MongoDB detectado na autenticação social');
+            }
+            throw MegaResponse(
+              message: 'Servidor temporariamente sobrecarregado. Tente novamente em alguns minutos.',
+              statusCode: 400,
+              erro: true,
+            );
+          }
+        }
+      }
+      
+      // Re-throw outros erros
+      rethrow;
+    }
   }
 
   Future<AuthToken> registerUserBySocial(ProfileToken profileToken) async {
@@ -45,6 +116,29 @@ class LoginProvider {
         data: profileToken.toJson(),
       );
       return AuthToken.fromJson(result.data);
+    } on DioException catch (e) {
+      // Tratamento específico para timeout do MongoDB
+      if (e.response?.statusCode == 400) {
+        final errorData = e.response?.data;
+        if (errorData != null && errorData is Map<String, dynamic>) {
+          final messageEx = errorData['messageEx'] as String?;
+          if (messageEx?.contains('timeout') == true || 
+              messageEx?.contains('MongoDB') == true ||
+              messageEx?.contains('CompositeServerSelector') == true) {
+            if (kDebugMode) {
+              print('🔧 Timeout do MongoDB detectado no registro social');
+            }
+            throw MegaResponse(
+              message: 'Servidor temporariamente sobrecarregado. Tente novamente em alguns minutos.',
+              statusCode: 400,
+              erro: true,
+            );
+          }
+        }
+      }
+      
+      // Re-throw outros erros
+      rethrow;
     } catch (e, s) { // Catching generic exception with stack trace
       if (kDebugMode) {
         print('Exception caught in registerUserBySocial. Type: ${e.runtimeType}');
@@ -87,15 +181,40 @@ class LoginProvider {
   }
 
   Future<AuthToken> linkSocialAccount(ProfileToken profileToken) async {
-    final MegaResponse result = await _restClientDio.post(
-      Urls.linkSocialAccount,
-      data: {
-        'email': profileToken.email,
-        'providerId': profileToken.providerId,
-        'typeProvider': profileToken.typeProvider,
-      },
-    );
-    return AuthToken.fromJson(result.data);
+    try {
+      final MegaResponse result = await _restClientDio.post(
+        Urls.linkSocialAccount,
+        data: {
+          'email': profileToken.email,
+          'providerId': profileToken.providerId,
+          'typeProvider': profileToken.typeProvider,
+        },
+      );
+      return AuthToken.fromJson(result.data);
+    } on DioException catch (e) {
+      // Tratamento específico para timeout do MongoDB
+      if (e.response?.statusCode == 400) {
+        final errorData = e.response?.data;
+        if (errorData != null && errorData is Map<String, dynamic>) {
+          final messageEx = errorData['messageEx'] as String?;
+          if (messageEx?.contains('timeout') == true || 
+              messageEx?.contains('MongoDB') == true ||
+              messageEx?.contains('CompositeServerSelector') == true) {
+            if (kDebugMode) {
+              print('🔧 Timeout do MongoDB detectado na vinculação de conta social');
+            }
+            throw MegaResponse(
+              message: 'Servidor temporariamente sobrecarregado. Tente novamente em alguns minutos.',
+              statusCode: 400,
+              erro: true,
+            );
+          }
+        }
+      }
+      
+      // Re-throw outros erros
+      rethrow;
+    }
   }
 }
 
