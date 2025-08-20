@@ -28,7 +28,11 @@ class FormAddressController extends GetxController {
   List<StateModel> states = [];
   List<CityModel> cities = [];
 
-  Address get address => localAddress.value;
+  Address get address {
+    print('=== FormAddressController address getter called ===');
+    print('localAddress.value: ${localAddress.value.toJson()}');
+    return localAddress.value;
+  }
   List<StateModel> get listStates => _listStates;
   List<CityModel> get listCities => _listCities;
   bool get isLoading => _isLading.value;
@@ -36,7 +40,9 @@ class FormAddressController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+    print('=== FormAddressController onInit called ===');
     await loadStates();
+    print('=== FormAddressController onInit finished ===');
   }
 
   Future<void> loadStates() async {
@@ -45,6 +51,7 @@ class FormAddressController extends GetxController {
   }
 
   Future<void> loadAddressByZipCode({bool isUpperCase = false}) async {
+    print('=== loadAddressByZipCode called with ZIP: ${zipCodeController.text} ===');
     if (zipCodeController.text.length == 10) {
       _isLading.toggle();
       await MegaRequestUtils.load(
@@ -52,6 +59,9 @@ class FormAddressController extends GetxController {
           final response =
               await _addressProvider.onSubmitRequest(zipCodeController.text);
           localAddress.value = response;
+          print('Address loaded from ZIP: ${response.toJson()}');
+          print('stateId from ZIP: ${response.stateId}');
+          print('cityId from ZIP: ${response.cityId}');
           addressController.text = isUpperCase
               ? response.streetAddress!.toUpperCase()
               : response.streetAddress!;
@@ -62,7 +72,10 @@ class FormAddressController extends GetxController {
               : response.neighborhood!;
           stateController.text = response.stateName ?? '';
           cityController.text = response.cityName ?? '';
-          cities = await _addressProvider.loadCities(response.stateId!);
+          if (response.stateId != null && response.stateId!.isNotEmpty) {
+            cities = await _addressProvider.loadCities(response.stateId!);
+            print('Loaded ${cities.length} cities for state ${response.stateId}');
+          }
           _listStates.addAll(states);
           _listCities.addAll(cities);
         },
@@ -86,6 +99,7 @@ class FormAddressController extends GetxController {
   }
 
   Future<void> changeState(StateCityShortModel state) async {
+    print('=== changeState called with: ${state.id}, ${state.name}, ${state.uf} ===');
     localAddress.value.stateId = state.id;
     localAddress.value.stateName = state.name;
     localAddress.value.stateUf = state.uf;
@@ -93,16 +107,22 @@ class FormAddressController extends GetxController {
     _listCities.clear();
     if (state.id != null && state.id!.trim().isNotEmpty) {
       cities = await _addressProvider.loadCities(state.id!);
+      print('Loaded ${cities.length} cities for state ${state.id}');
     }
     _listCities.addAll(cities);
     localAddress.refresh();
+    print('Address after changeState: ${localAddress.value.toJson()}');
+    print('=== changeState finished ===');
   }
 
   void changeCity(StateCityShortModel city) {
+    print('=== changeCity called with: ${city.id}, ${city.name} ===');
     localAddress.value.cityId = city.id;
     localAddress.value.cityName = city.name;
     cityController.text = city.name!;
     localAddress.refresh();
+    print('Address after changeCity: ${localAddress.value.toJson()}');
+    print('=== changeCity finished ===');
   }
 
   void searchStateByText(String? stateName) {
@@ -142,6 +162,7 @@ class FormAddressController extends GetxController {
   }
 
   void setAddress(Address address) {
+    print('=== setAddress called with: ${address.toJson()} ===');
     localAddress.value = address;
     zipCodeController.text = address.zipCode ?? '';
     addressController.text = address.streetAddress ?? '';
@@ -150,11 +171,32 @@ class FormAddressController extends GetxController {
     neighborhoodController.text = address.neighborhood ?? '';
     cityController.text = address.cityName ?? '';
     stateController.text = address.stateName ?? '';
-    changeState(StateCityShortModel(
-      id: address.stateId,
-      name: address.stateName,
-      uf: address.stateUf,
-    ));
+    
+    // Se temos stateId, vamos carregar as cidades e definir a cidade correta
+    if (address.stateId != null && address.stateId!.isNotEmpty) {
+      print('Setting state with ID: ${address.stateId}');
+      changeState(StateCityShortModel(
+        id: address.stateId,
+        name: address.stateName,
+        uf: address.stateUf,
+      )).then((_) {
+        // Após carregar as cidades, vamos procurar e definir a cidade correta
+        if (address.cityId != null && address.cityId!.isNotEmpty) {
+          print('Setting city with ID: ${address.cityId}');
+          final city = cities.firstWhere(
+            (c) => c.id == address.cityId,
+            orElse: () => CityModel(),
+          );
+          if (city.id != null) {
+            changeCity(StateCityShortModel(
+              id: city.id,
+              name: city.name,
+            ));
+          }
+        }
+      });
+    }
+    print('=== setAddress finished ===');
   }
 
   void clear() {
