@@ -53,7 +53,7 @@ class _BankSearchDropdownState extends State<BankSearchDropdown> {
         _filteredBanks = widget.banks.where((bank) {
           return bank.name?.toLowerCase().contains(query) == true ||
                  bank.code?.toLowerCase().contains(query) == true ||
-                 bank.shortName?.toLowerCase().contains(query) == true;
+                 bank.name?.toLowerCase().contains(query) == true;
         }).toList();
       }
     });
@@ -187,7 +187,7 @@ class _BankSearchDropdownState extends State<BankSearchDropdown> {
                                 color: Colors.grey[600],
                               ),
                             ),
-                            trailing: bank.shortName != null
+                            trailing: bank.code != null
                                 ? Container(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 8,
@@ -198,7 +198,7 @@ class _BankSearchDropdownState extends State<BankSearchDropdown> {
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
-                                      bank.shortName!,
+                                      bank.code!,
                                       style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
@@ -231,7 +231,7 @@ class _BankSearchDropdownState extends State<BankSearchDropdown> {
           Text(
             widget.label!,
             style: const TextStyle(
-              color: AppColors.black,
+              color: Colors.black,
               fontWeight: FontWeight.w400,
             ),
           ),

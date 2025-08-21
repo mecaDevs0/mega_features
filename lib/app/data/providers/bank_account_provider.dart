@@ -13,8 +13,10 @@ class BankAccountProvider {
         _megaApi = megaApi;
 
   Future<List<Bank>> onSubmitRequest() async {
-    final response = await _megaApi.get('banks');
-    return (response.data as List).map((bank) => Bank.fromJson(bank)).toList();
+    final response = await _megaApi.get(Urls.bank);
+    // A API retorna {data: [...], erro: false, ...}, então precisamos acessar response.data.data
+    final banksData = response.data['data'] as List;
+    return banksData.map((bank) => Bank.fromJson(bank)).toList();
   }
 
   Future<MegaResponse> updateRegisterPatch({
