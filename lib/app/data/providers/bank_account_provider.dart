@@ -13,7 +13,7 @@ class BankAccountProvider {
         _megaApi = megaApi;
 
   Future<List<Bank>> onSubmitRequest() async {
-    final response = await _megaApi.get(Urls.bank);
+    final response = await _megaApi.get('banks');
     return (response.data as List).map((bank) => Bank.fromJson(bank)).toList();
   }
 

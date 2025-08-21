@@ -1,4 +1,5 @@
 export 'address_provider.dart';
+export 'bank_account_provider.dart';
 export 'change_password_provider.dart';
 export 'forgot_password_provider.dart';
 export 'login_provider.dart';

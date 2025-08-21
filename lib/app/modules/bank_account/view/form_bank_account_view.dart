@@ -6,6 +6,7 @@ import 'package:mega_commons/shared/models/person_type.dart';
 import 'package:mega_commons_dependencies/mega_commons_dependencies.dart';
 
 import '../../../../mega_features.dart';
+import 'bank_search_dropdown.dart';
 
 class FormBankAccountView extends GetView<BankAccountController> {
   const FormBankAccountView({
@@ -63,21 +64,13 @@ class FormBankAccountView extends GetView<BankAccountController> {
                 title: 'Banco',
                 fontColor: fontColor,
               ),
-            MegaDropDownWidget<Bank>(
+            BankSearchDropdown(
               controller: controller.bankController,
+              banks: controller.listBanks,
               label: isWithTitle ? null : 'Banco',
               hintText: isWithTitle ? 'Selecione seu banco' : null,
-              title: 'Selecione o Banco',
               isRequired: true,
-              listDropDownItem: controller.listBanks
-                  .map(
-                    (bank) => MegaItemWidget<Bank>(
-                      value: bank,
-                      itemLabel: bank.name,
-                    ),
-                  )
-                  .toList(),
-              onChanged: (bank) {
+              onBankSelected: (bank) {
                 controller.selectedBank = bank;
                 controller.bankAccountController.clear();
                 controller.bankAgency.clear();
