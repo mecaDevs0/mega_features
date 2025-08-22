@@ -88,9 +88,7 @@ class FormBankAccountView extends GetView<BankAccountController> {
               isRequired: true,
               hintText:
                   controller.selectedBank.agencyMask ?? 'Digite sua agência',
-              helperText: controller.selectedBank.id != null
-                  ? _getAgencyHelpHint(controller.selectedBank)
-                  : null,
+              helperText: null,
               inputFormatters: controller.selectedBank.agencyMask != null
                   ? [
                       LengthLimitingTextInputFormatter(
@@ -116,9 +114,7 @@ class FormBankAccountView extends GetView<BankAccountController> {
               isRequired: true,
               hintText:
                   controller.selectedBank.accountMask ?? 'Digite sua conta',
-              helperText: controller.selectedBank.id != null
-                  ? _getAccountHelpHint(controller.selectedBank)
-                  : null,
+              helperText: null,
               inputFormatters: controller.selectedBank.accountMask != null
                   ? [
                       LengthLimitingTextInputFormatter(
@@ -236,11 +232,6 @@ class FormBankAccountView extends GetView<BankAccountController> {
               ),
             MegaTextFieldWidget(
               controller.accountableCpf,
-              onTap: () {
-                if (kDebugMode) {
-                  controller.accountableCpf.text = UtilBrasilFields.gerarCPF();
-                }
-              },
               labelText: isWithTitle ? null : 'CPF do Titular',
               hintText: isWithTitle ? 'Digite o CPF do titular' : null,
               isRequired: true,

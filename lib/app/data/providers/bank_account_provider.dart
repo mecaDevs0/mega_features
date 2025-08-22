@@ -47,7 +47,7 @@ class BankAccountProvider {
     String? pathBank,
   }) async {
     final response = await _restClientDio.patch(
-        pathBank != null ? '$pathBank/$userId' : '${Urls.bank}/$userId',
+        pathBank ?? 'Workshop/UpdateDataBank/$userId',
         data: bankAccount.toJson());
     return response;
   }
