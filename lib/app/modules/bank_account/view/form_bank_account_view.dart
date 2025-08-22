@@ -34,7 +34,7 @@ class FormBankAccountView extends GetView<BankAccountController> {
 
   String _getAgencyHelpHint(Bank bank) {
     String hint = '9 é o número da agência';
-    if (bank.agencyMask!.contains('D')) {
+    if (bank.agencyMask?.contains('D') == true) {
       hint = '$hint | D é o digito verificador';
     }
     return hint;
@@ -42,10 +42,10 @@ class FormBankAccountView extends GetView<BankAccountController> {
 
   String _getAccountHelpHint(Bank bank) {
     String hint = '9 é o número da conta';
-    if (bank.accountMask!.contains('X')) {
+    if (bank.accountMask?.contains('X') == true) {
       hint = '$hint | X é a operação';
     }
-    if (bank.accountMask!.contains('D')) {
+    if (bank.accountMask?.contains('D') == true) {
       hint = '$hint | D é o digito verificador';
     }
     return hint;
