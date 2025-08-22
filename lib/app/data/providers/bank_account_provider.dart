@@ -14,8 +14,13 @@ class BankAccountProvider {
 
   Future<List<Bank>> onSubmitRequest() async {
     final response = await _megaApi.get(Urls.bank);
-    // A API retorna {data: [...], erro: false, ...}, então precisamos acessar response.data.data
-    final banksData = response.data['data'] as List;
+    // Verificar se response.data já é a resposta parseada ou se precisamos acessar ['data']
+    List banksData;
+    if (response.data is Map && response.data.containsKey('data')) {
+      banksData = response.data['data'] as List;
+    } else {
+      banksData = response.data as List;
+    }
     return banksData.map((bank) => Bank.fromJson(bank)).toList();
   }
 
