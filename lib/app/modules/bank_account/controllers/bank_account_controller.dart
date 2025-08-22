@@ -156,7 +156,13 @@ class BankAccountController extends GetxController {
     await MegaRequestUtils.load(
       action: () async {
         final response = await _bankProvider.onSubmitRequest();
+        print('🔍 [CONTROLLER_DEBUG] Response from provider: ${response.length} banks');
+        if (response.isNotEmpty) {
+          print('🔍 [CONTROLLER_DEBUG] First bank from provider: ${response.first.name} - ${response.first.code}');
+        }
         _listBanks.assignAll(response);
+        print('🔍 [CONTROLLER_DEBUG] _listBanks length after assign: ${_listBanks.length}');
+        print('🔍 [CONTROLLER_DEBUG] listBanks getter length: ${listBanks.length}');
       },
       onFinally: () => _isLoading.value = false,
     );
