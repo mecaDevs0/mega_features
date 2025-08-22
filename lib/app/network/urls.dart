@@ -13,7 +13,7 @@ class Urls {
   static const String getCitiesByStateId = 'City';
   static const String getStateByBrazilCountry = 'City/ListState';
   static const String notification = 'api/v1/Notification';
-  static const String bank = 'Bank';
+  static const String bank = 'api/v1/Bank';
   static const String registerUnregister =
       'api/v1/Profile/RegisterUnRegisterDeviceId';
 }
