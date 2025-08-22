@@ -46,7 +46,7 @@ class BankAccountProvider {
     required BankAccount bankAccount,
     String? pathBank,
   }) async {
-    final endpoint = pathBank ?? 'Workshop/UpdateDataBank/$userId';
+    final endpoint = pathBank ?? 'api/v1/Workshop/UpdateDataBank/$userId';
     print('🔍 [PROVIDER_DEBUG] Update endpoint: $endpoint');
     print('🔍 [PROVIDER_DEBUG] User ID: $userId');
     print('🔍 [PROVIDER_DEBUG] Bank account data: ${bankAccount.toJson()}');
