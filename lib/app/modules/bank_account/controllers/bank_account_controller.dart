@@ -161,13 +161,12 @@ class BankAccountController extends GetxController {
           print('🔍 [CONTROLLER_DEBUG] First bank from provider: ${response.first.name} - ${response.first.code}');
         }
         
-        // Remove duplicatas baseado no código do banco e nome
+        // Remove duplicatas baseado no nome do banco (mantém apenas um por nome)
         final uniqueBanks = <String, Bank>{};
         for (final bank in response) {
-          if (bank.code != null) {
-            final key = '${bank.code}_${bank.name}';
-            if (!uniqueBanks.containsKey(key)) {
-              uniqueBanks[key] = bank;
+          if (bank.name != null && bank.code != null) {
+            if (!uniqueBanks.containsKey(bank.name)) {
+              uniqueBanks[bank.name!] = bank;
             }
           }
         }
