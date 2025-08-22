@@ -46,9 +46,12 @@ class BankAccountProvider {
     required BankAccount bankAccount,
     String? pathBank,
   }) async {
-    final response = await _restClientDio.patch(
-        pathBank ?? 'Workshop/UpdateDataBank/$userId',
-        data: bankAccount.toJson());
+    final endpoint = pathBank ?? 'Workshop/UpdateDataBank/$userId';
+    print('🔍 [PROVIDER_DEBUG] Update endpoint: $endpoint');
+    print('🔍 [PROVIDER_DEBUG] User ID: $userId');
+    print('🔍 [PROVIDER_DEBUG] Bank account data: ${bankAccount.toJson()}');
+    
+    final response = await _restClientDio.patch(endpoint, data: bankAccount.toJson());
     return response;
   }
 
