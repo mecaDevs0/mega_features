@@ -91,13 +91,18 @@ class FormBankAccountView extends GetView<BankAccountController> {
               helperText: controller.selectedBank.id != null
                   ? _getAgencyHelpHint(controller.selectedBank)
                   : null,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(
-                    controller.selectedBank.agencyMask?.length),
-                MegaDataBankInputFormatter(
-                  mask: controller.selectedBank.agencyMask ?? '',
-                ),
-              ],
+              inputFormatters: controller.selectedBank.agencyMask != null
+                  ? [
+                      LengthLimitingTextInputFormatter(
+                          controller.selectedBank.agencyMask!.length),
+                      MegaDataBankInputFormatter(
+                        mask: controller.selectedBank.agencyMask!,
+                      ),
+                    ]
+                  : [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                    ],
             ),
             if (isWithTitle)
               TitleWidget(
@@ -114,13 +119,18 @@ class FormBankAccountView extends GetView<BankAccountController> {
               helperText: controller.selectedBank.id != null
                   ? _getAccountHelpHint(controller.selectedBank)
                   : null,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(
-                    controller.selectedBank.accountMask?.length),
-                MegaDataBankInputFormatter(
-                  mask: controller.selectedBank.accountMask ?? '',
-                ),
-              ],
+              inputFormatters: controller.selectedBank.accountMask != null
+                  ? [
+                      LengthLimitingTextInputFormatter(
+                          controller.selectedBank.accountMask!.length),
+                      MegaDataBankInputFormatter(
+                        mask: controller.selectedBank.accountMask!,
+                      ),
+                    ]
+                  : [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(15),
+                    ],
             ),
             if (isWithTitle)
               TitleWidget(

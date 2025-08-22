@@ -160,7 +160,19 @@ class BankAccountController extends GetxController {
         if (response.isNotEmpty) {
           print('🔍 [CONTROLLER_DEBUG] First bank from provider: ${response.first.name} - ${response.first.code}');
         }
-        _listBanks.assignAll(response);
+        
+        // Remove duplicatas baseado no código do banco
+        final uniqueBanks = <String, Bank>{};
+        for (final bank in response) {
+          if (bank.code != null && !uniqueBanks.containsKey(bank.code)) {
+            uniqueBanks[bank.code!] = bank;
+          }
+        }
+        
+        final uniqueBanksList = uniqueBanks.values.toList();
+        print('🔍 [CONTROLLER_DEBUG] Unique banks after deduplication: ${uniqueBanksList.length}');
+        
+        _listBanks.assignAll(uniqueBanksList);
         print('🔍 [CONTROLLER_DEBUG] _listBanks length after assign: ${_listBanks.length}');
         print('🔍 [CONTROLLER_DEBUG] listBanks getter length: ${listBanks.length}');
       },
