@@ -128,6 +128,7 @@ class BankAccountController extends GetxController {
             bankCnpj: bankCnpjController.text.isEmpty
                 ? null
                 : bankCnpjController.text,
+            hasDataBank: true, // Definir como true quando há dados bancários
           );
           final result = isPost
               ? await _bankProvider.updateRegisterPost(

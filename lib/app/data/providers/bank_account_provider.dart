@@ -46,13 +46,12 @@ class BankAccountProvider {
     required BankAccount bankAccount,
     String? pathBank,
   }) async {
-    // TESTE: Usar POST temporariamente para contornar o problema do PATCH
-    final endpoint = pathBank ?? 'api/v1/Workshop/UpdateDataBankTest/$userId';
-    print('🔍 [PROVIDER_DEBUG] Update endpoint (TESTE POST): $endpoint');
+    final endpoint = pathBank ?? 'api/v1/Workshop/UpdateDataBank/$userId';
+    print('🔍 [PROVIDER_DEBUG] Update endpoint: $endpoint');
     print('🔍 [PROVIDER_DEBUG] User ID: $userId');
     print('🔍 [PROVIDER_DEBUG] Bank account data: ${bankAccount.toJson()}');
     
-    final response = await _restClientDio.post(endpoint, data: bankAccount.toJson());
+    final response = await _restClientDio.patch(endpoint, data: bankAccount.toJson());
     return response;
   }
 
