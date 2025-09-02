@@ -19,6 +19,13 @@ class LoginProvider {
 
   Future<AuthToken> signInWithEmail(ProfileToken profileToken) async {
     try {
+      if (kDebugMode) {
+        print('🔧 [LOGIN_PROVIDER] Iniciando signInWithEmail');
+        print('🔧 [LOGIN_PROVIDER] Email: ${profileToken.email}');
+        print('🔧 [LOGIN_PROVIDER] Password: ${profileToken.password != null ? '***' : 'null'}');
+        print('🔧 [LOGIN_PROVIDER] URL: ${pathLogin ?? Urls.token}');
+      }
+      
       final MegaResponse result = await _restClientDio.post(
         pathLogin ?? Urls.token,
         data: {
@@ -27,8 +34,16 @@ class LoginProvider {
         },
       );
       
+      if (kDebugMode) {
+        print('🔧 [LOGIN_PROVIDER] Response status: ${result.statusCode}');
+        print('🔧 [LOGIN_PROVIDER] Response data: ${result.data}');
+      }
+      
       // Verificar se result.data não é null antes de tentar criar AuthToken
       if (result.data == null) {
+        if (kDebugMode) {
+          print('🔧 [LOGIN_PROVIDER] ERRO: result.data é null');
+        }
         throw MegaResponse(
           message: 'Resposta inválida do servidor. Tente novamente.',
           statusCode: 500,
@@ -36,7 +51,13 @@ class LoginProvider {
         );
       }
       
-      return AuthToken.fromJson(result.data);
+      final authToken = AuthToken.fromJson(result.data);
+      if (kDebugMode) {
+        print('🔧 [LOGIN_PROVIDER] AuthToken criado com sucesso');
+        print('🔧 [LOGIN_PROVIDER] Token: ${authToken.accessToken != null ? '***' : 'null'}');
+      }
+      
+      return authToken;
     } on DioException catch (e) {
       // Tratamento específico para timeout do MongoDB
       if (e.response?.statusCode == 400) {
